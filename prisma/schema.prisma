@@ -1,0 +1,216 @@
+// This is your Prisma schema file.
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  stackId   String   @unique
+  email     String   @unique
+  username  String   @unique
+  displayName String?
+  avatar    String?
+  bio       String?
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationships
+  posts         Post[]
+  votes         Vote[]
+  comments      Comment[]
+  spaces        SpaceMember[]
+  ownedSpaces   Space[]       @relation("SpaceOwner")
+  followers     Follow[]      @relation("Following")
+  following     Follow[]      @relation("Follower")
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model Space {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  avatar      String?
+  banner      String?
+  type        SpaceType @default(PUBLIC)
+  rules       String?
+  memberCount Int       @default(0)
+  postCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Owner
+  ownerId String
+  owner   User   @relation("SpaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+
+  // Relationships
+  members SpaceMember[]
+  posts   Post[]
+
+  @@map("spaces")
+}
+
+model SpaceMember {
+  id      String          @id @default(cuid())
+  role    SpaceMemberRole @default(MEMBER)
+  joinedAt DateTime       @default(now())
+
+  // Foreign keys
+  userId  String
+  spaceId String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  space   Space  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, spaceId])
+  @@map("space_members")
+}
+
+model Post {
+  id        String     @id @default(cuid())
+  title     String?
+  content   String     @db.Text
+  images    Json?
+  type      PostType   @default(TEXT)
+  status    PostStatus @default(PUBLISHED)
+  upvotes   Int        @default(0)
+  downvotes Int        @default(0)
+  score     Int        @default(0)
+  isAnonymous Boolean  @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Foreign keys
+  authorId String?
+  spaceId  String?
+  author   User?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  space    Space? @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  // Relationships
+  votes    Vote[]
+  comments Comment[]
+
+  @@map("posts")
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  upvotes   Int      @default(0)
+  downvotes Int      @default(0)
+  score     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Foreign keys
+  authorId String?
+  postId   String
+  parentId String?
+  author   User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+
+  // Relationships
+  replies Comment[] @relation("CommentReplies")
+  votes   Vote[]
+
+  @@map("comments")
+}
+
+model Vote {
+  id   String   @id @default(cuid())
+  type VoteType
+  createdAt DateTime @default(now())
+
+  // Foreign keys
+  userId    String
+  postId    String?
+  commentId String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+  @@unique([userId, commentId])
+  @@map("votes")
+}
+
+model Follow {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Foreign keys
+  followerId  String
+  followingId String
+  follower    User   @relation("Follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following   User   @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Notification {
+  id      String           @id @default(cuid())
+  type    NotificationType
+  title   String
+  message String
+  isRead  Boolean          @default(false)
+  data    Json?
+  createdAt DateTime       @default(now())
+
+  // Foreign keys
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+enum SpaceType {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum SpaceMemberRole {
+  OWNER
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+enum PostType {
+  TEXT
+  IMAGE
+  LINK
+}
+
+enum PostStatus {
+  PUBLISHED
+  PENDING
+  REJECTED
+  DRAFT
+}
+
+enum VoteType {
+  UP
+  DOWN
+}
+
+enum NotificationType {
+  FOLLOW
+  MENTION
+  REPLY
+  SPACE_INVITE
+  POST_APPROVED
+  POST_REJECTED
+}
