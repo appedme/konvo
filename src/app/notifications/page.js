@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Navbar } from '@/components/layout/navbar'
 import { AuthWrapper } from '@/components/auth/auth-wrapper'
 import { Button } from '@/components/ui/button'
@@ -25,20 +25,14 @@ function NotificationsContent({ user }) {
   const [unreadCount, setUnreadCount] = useState(0)
   const [filter, setFilter] = useState('all') // all, unread
 
-  useEffect(() => {
-    if (user) {
-      fetchNotifications()
-    }
-  }, [user, filter])
-
-  const fetchNotifications = async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
         limit: '50',
         ...(filter === 'unread' && { unread: 'true' })
       })
-
+      
       const response = await fetch(`/api/notifications?${params}`)
       if (response.ok) {
         const data = await response.json()
@@ -50,7 +44,13 @@ function NotificationsContent({ user }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [filter])
+
+  useEffect(() => {
+    if (user) {
+      fetchNotifications()
+    }
+  }, [user, fetchNotifications])
 
   const markAsRead = async (notificationIds = null) => {
     try {

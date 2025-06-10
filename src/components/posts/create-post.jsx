@@ -1,104 +1,112 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Image, Link as LinkIcon, Type } from 'lucide-react'
+import { Image, Link as LinkIcon, Type, Loader2, Send } from 'lucide-react'
+import { createPost } from '@/lib/actions/posts'
+import { showSuccess, showError } from '@/lib/toast'
 
 export function CreatePost({ user, spaceId = null, onPostCreated }) {
   const [content, setContent] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-  const [postType, setPostType] = useState('TEXT')
+  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!content.trim() || isLoading) return
+    if (!content.trim() || isPending) return
 
-    setIsLoading(true)
-    try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content: content.trim(),
-          type: postType,
-          spaceId,
-        }),
-      })
+    setError('')
+    const formData = new FormData()
+    formData.append('content', content.trim())
+    if (spaceId) formData.append('spaceId', spaceId)
 
-      if (response.ok) {
-        setContent('')
-        onPostCreated?.()
+    startTransition(async () => {
+      try {
+        const result = await createPost(formData)
+        if (result.success) {
+          setContent('')
+          onPostCreated?.()
+          showSuccess('Post created successfully!')
+        } else {
+          setError(result.error || 'Failed to create post')
+          showError(result.error || 'Failed to create post')
+        }
+      } catch (error) {
+        console.error('Create post error:', error)
+        setError('Something went wrong. Please try again.')
+        showError('Something went wrong. Please try again.')
       }
-    } catch (error) {
-      console.error('Error creating post:', error)
-    } finally {
-      setIsLoading(false)
-    }
+    })
   }
 
   if (!user) return null
 
   return (
-    <Card>
-      <CardContent className="p-4">
+    <Card className="modern-card hover-lift animate-fade-in">
+      <CardContent className="p-6">
         <form onSubmit={handleSubmit}>
-          <div className="flex space-x-3">
-            <Avatar className="h-10 w-10">
+          <div className="flex space-x-4">
+            <Avatar className="h-12 w-12 ring-2 ring-primary/10 shadow-sm">
               <AvatarImage src={user.profileImageUrl} />
-              <AvatarFallback>
+              <AvatarFallback className="font-semibold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                 {user.displayName?.[0] || user.primaryEmail?.[0] || 'U'}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-4">
               <Textarea
-                placeholder={spaceId ? "What's happening in this space?" : "What's on your mind?"}
+                placeholder={spaceId ? "Share something amazing with this space..." : "What's on your mind?"}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                className="min-h-[100px] resize-none border-0 p-0 text-lg placeholder:text-muted-foreground focus-visible:ring-0"
+                className="min-h-[120px] resize-none border-0 p-0 text-lg placeholder:text-muted-foreground/70 focus-visible:ring-0 bg-transparent"
               />
 
-              <div className="flex items-center justify-between">
-                <div className="flex space-x-1">
+              {error && (
+                <div className="text-sm text-destructive bg-destructive/10 px-3 py-2 rounded-lg">
+                  {error}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between pt-3 border-t border-border/50">
+                <div className="flex space-x-2">
                   <Button
                     type="button"
-                    variant={postType === 'TEXT' ? 'default' : 'ghost'}
+                    variant="ghost"
                     size="sm"
-                    onClick={() => setPostType('TEXT')}
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-full"
                   >
-                    <Type className="h-4 w-4 mr-1" />
-                    Text
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={postType === 'IMAGE' ? 'default' : 'ghost'}
-                    size="sm"
-                    onClick={() => setPostType('IMAGE')}
-                  >
-                    <Image className="h-4 w-4 mr-1" />
+                    <Image className="h-4 w-4 mr-2" />
                     Image
                   </Button>
                   <Button
                     type="button"
-                    variant={postType === 'LINK' ? 'default' : 'ghost'}
+                    variant="ghost"
                     size="sm"
-                    onClick={() => setPostType('LINK')}
+                    className="text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-full"
                   >
-                    <LinkIcon className="h-4 w-4 mr-1" />
+                    <LinkIcon className="h-4 w-4 mr-2" />
                     Link
                   </Button>
                 </div>
 
                 <Button
                   type="submit"
-                  disabled={!content.trim() || isLoading}
-                  className="px-6"
+                  disabled={!content.trim() || isPending}
+                  className="btn-gradient px-8 font-semibold shadow-md hover:shadow-lg transition-all duration-200 group"
                 >
-                  {isLoading ? 'Posting...' : 'Post'}
+                  {isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Posting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2 group-hover:translate-x-0.5 transition-transform duration-200" />
+                      Post
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

@@ -40,10 +40,10 @@ function SpacePageContent({ user }) {
             // Check if user is the owner
             const userIsOwner = space.owner && space.owner.username === user.primaryEmail.split('@')[0]
             setIsOwner(userIsOwner)
-            
+
             // Check if user is a member (for now, owners are always members)
             // In the future, this can check the members array
-            const userIsMember = userIsOwner || space.members?.some(member => 
+            const userIsMember = userIsOwner || space.members?.some(member =>
                 member.user.username === user.primaryEmail.split('@')[0]
             )
             setIsMember(userIsMember)

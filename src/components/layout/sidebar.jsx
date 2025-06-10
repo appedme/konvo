@@ -23,50 +23,52 @@ export function Sidebar({ user }) {
   if (!user) return null
 
   return (
-    <aside className="w-80 shrink-0 p-4">
-      <div className="space-y-4">
+    <aside className="w-80 shrink-0 p-4 space-y-6">
+      <div className="space-y-6">
         {/* User Profile Card */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-3">
-              <Avatar className="h-12 w-12">
+        <Card className="modern-card hover-lift animate-fade-in">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-4">
+              <Avatar className="h-14 w-14 ring-4 ring-primary/10 shadow-lg">
                 <AvatarImage src={user.profileImageUrl} />
-                <AvatarFallback>
+                <AvatarFallback className="text-lg font-bold bg-gradient-to-br from-blue-500 to-purple-600 text-white">
                   {user.displayName?.[0] || user.primaryEmail?.[0] || 'U'}
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">
+                <p className="text-base font-bold text-foreground truncate">
                   {user.displayName || 'Anonymous User'}
                 </p>
-                <p className="text-xs text-muted-foreground truncate">
+                <p className="text-sm text-muted-foreground truncate">
                   @{user.primaryEmail?.split('@')[0]}
                 </p>
               </div>
             </div>
-            <div className="mt-3 flex space-x-2">
-              <Button size="sm" className="flex-1" asChild>
-                <Link href="/create-space">Create Space</Link>
+            <div className="mt-4">
+              <Button size="sm" className="w-full btn-gradient font-semibold" asChild>
+                <Link href="/create-space">
+                  <span>Create Space</span>
+                </Link>
               </Button>
             </div>
           </CardContent>
         </Card>
 
         {/* Quick Links */}
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-sm mb-3">Quick Links</h3>
-            <div className="space-y-1">
+        <Card className="modern-card hover-lift animate-fade-in">
+          <CardContent className="p-6">
+            <h3 className="font-bold text-base mb-4 text-foreground">Quick Links</h3>
+            <div className="space-y-2">
               {quickLinks.map((link) => (
                 <Button
                   key={link.name}
                   variant="ghost"
                   size="sm"
-                  className="w-full justify-start"
+                  className="w-full justify-start h-11 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-lg font-medium"
                   asChild
                 >
                   <Link href={link.href}>
-                    <link.icon className="mr-2 h-4 w-4" />
+                    <link.icon className="mr-3 h-5 w-5" />
                     {link.name}
                   </Link>
                 </Button>
@@ -76,20 +78,24 @@ export function Sidebar({ user }) {
         </Card>
 
         {/* Trending Spaces */}
-        <Card>
-          <CardContent className="p-4">
-            <h3 className="font-semibold text-sm mb-3">Trending Spaces</h3>
+        <Card className="modern-card hover-lift animate-fade-in">
+          <CardContent className="p-6">
+            <h3 className="font-bold text-base mb-4 text-foreground">Trending Spaces</h3>
             <div className="space-y-3">
               {trendingSpaces.map((space) => (
                 <Link
                   key={space.slug}
                   href={`/s/${space.slug}`}
-                  className="flex items-center space-x-3 p-2 rounded-lg hover:bg-accent transition-colors"
+                  className="flex items-center space-x-3 p-3 rounded-xl hover:bg-accent/50 transition-all duration-200 hover-lift group"
                 >
-                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500" />
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 shadow-md flex items-center justify-center text-white font-bold text-sm">
+                    {space.name[0]}
+                  </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">s/{space.name}</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors duration-200 truncate">
+                      s/{space.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground flex items-center">
                       <Users className="inline h-3 w-3 mr-1" />
                       {space.members.toLocaleString()} members
                     </p>

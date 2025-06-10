@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { Navbar } from '@/components/layout/navbar'
 import { PostCard } from '@/components/posts/post-card'
@@ -28,13 +28,7 @@ function UserProfileContent({ user: currentUser }) {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('posts')
 
-  useEffect(() => {
-    if (username) {
-      fetchProfile()
-    }
-  }, [username])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/users/${username}`)
@@ -47,7 +41,13 @@ function UserProfileContent({ user: currentUser }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [username])
+
+  useEffect(() => {
+    if (username) {
+      fetchProfile()
+    }
+  }, [username, fetchProfile])
 
   if (loading) {
     return (

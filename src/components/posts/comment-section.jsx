@@ -1,38 +1,19 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { MessageCircle, ArrowUp, ArrowDown, Reply } from 'lucide-react'
 import { formatTimeAgo } from '@/lib/utils'
+import { useComments } from '@/hooks/use-spaces'
 
 export function CommentSection({ postId, user }) {
-  const [comments, setComments] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { comments, isLoading, addComment } = useComments(postId)
   const [newComment, setNewComment] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyTo, setReplyTo] = useState(null)
-
-  useEffect(() => {
-    fetchComments()
-  }, [postId])
-
-  const fetchComments = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch(`/api/posts/${postId}/comments`)
-      if (response.ok) {
-        const data = await response.json()
-        setComments(data.comments)
-      }
-    } catch (error) {
-      console.error('Error fetching comments:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const handleSubmitComment = async (e) => {
     e.preventDefault()
@@ -40,23 +21,9 @@ export function CommentSection({ postId, user }) {
 
     setIsSubmitting(true)
     try {
-      const response = await fetch(`/api/posts/${postId}/comments`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content: newComment.trim(),
-          parentId: replyTo?.id || null,
-        }),
-      })
-
-      if (response.ok) {
-        const data = await response.json()
-        setComments(prev => [data.comment, ...prev])
-        setNewComment('')
-        setReplyTo(null)
-      }
+      await addComment(newComment.trim())
+      setNewComment('')
+      setReplyTo(null)
     } catch (error) {
       console.error('Error posting comment:', error)
     } finally {
@@ -69,15 +36,15 @@ export function CommentSection({ postId, user }) {
     setNewComment(`@${comment.author.username} `)
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-fade-in">
         <div className="animate-pulse">
           <div className="h-4 bg-muted rounded w-1/4 mb-4"></div>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="flex space-x-3">
-                <div className="h-8 w-8 bg-muted rounded-full"></div>
+                <div className="h-10 w-10 bg-muted rounded-full"></div>
                 <div className="flex-1 space-y-2">
                   <div className="h-4 bg-muted rounded w-1/6"></div>
                   <div className="h-4 bg-muted rounded w-full"></div>
