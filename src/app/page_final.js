@@ -1,23 +1,29 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useUser } from '@stackframe/stack'
+import { useState, useEffect } from 'react'
 import { Navbar } from '@/components/layout/navbar'
 import { Sidebar } from '@/components/layout/sidebar'
 import { CreatePost } from '@/components/posts/create-post'
 import { PostCard } from '@/components/posts/post-card'
 import { LandingPage } from '@/components/landing-page'
-import { AuthWrapper } from '@/components/auth/auth-wrapper'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { TrendingUp, Clock } from 'lucide-react'
-import Loading from '@/components/ui/loading'
 
-function HomeContent({ user }) {
+export default function Home() {
+  const user = useUser()
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [sortBy, setSortBy] = useState('recent')
 
-  const fetchPosts = useCallback(async () => {
+  useEffect(() => {
+    if (user) {
+      fetchPosts()
+    }
+  }, [sortBy, user])
+
+  const fetchPosts = async () => {
     try {
       setLoading(true)
       const response = await fetch(`/api/posts?type=${sortBy}&limit=20`)
@@ -30,13 +36,7 @@ function HomeContent({ user }) {
     } finally {
       setLoading(false)
     }
-  }, [sortBy])
-
-  useEffect(() => {
-    if (user) {
-      fetchPosts()
-    }
-  }, [user, fetchPosts])
+  }
 
   const handlePostCreated = () => {
     fetchPosts()
@@ -45,7 +45,7 @@ function HomeContent({ user }) {
   if (!user) {
     return (
       <>
-        <Navbar user={user} />
+        <Navbar />
         <LandingPage />
       </>
     )
@@ -53,7 +53,7 @@ function HomeContent({ user }) {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar user={user} />
+      <Navbar />
       <div className="container mx-auto px-4">
         <div className="flex gap-6">
           <main className="flex-1 max-w-2xl mx-auto py-6 space-y-6">
@@ -80,7 +80,7 @@ function HomeContent({ user }) {
             </div>
 
             {/* Create Post */}
-            <CreatePost user={user} onPostCreated={handlePostCreated} />
+            <CreatePost onPostCreated={handlePostCreated} />
 
             {/* Posts Feed */}
             <div className="space-y-4">
@@ -98,23 +98,15 @@ function HomeContent({ user }) {
                 </Card>
               ) : (
                 posts.map((post) => (
-                  <PostCard key={post.id} post={post} user={user} showSpace={true} />
+                  <PostCard key={post.id} post={post} showSpace={true} />
                 ))
               )}
             </div>
           </main>
 
-          <Sidebar user={user} />
+          <Sidebar />
         </div>
       </div>
     </div>
-  )
-}
-
-export default function Home() {
-  return (
-    <AuthWrapper fallback={<Loading />}>
-      {({ user }) => <HomeContent user={user} />}
-    </AuthWrapper>
   )
 }

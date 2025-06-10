@@ -1,25 +1,23 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Navbar } from '@/components/layout/navbar'
 import { SpaceCard } from '@/components/spaces/space-card'
 import { CreateSpaceDialog } from '@/components/spaces/create-space-dialog'
+import { AuthWrapper } from '@/components/auth/auth-wrapper'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Search, TrendingUp, Clock, Plus } from 'lucide-react'
+import Loading from '@/components/ui/loading'
 
-export default function ExplorePage() {
+function ExplorePageContent({ user }) {
   const [spaces, setSpaces] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [sortBy, setSortBy] = useState('popular')
 
-  useEffect(() => {
-    fetchSpaces()
-  }, [sortBy, searchTerm])
-
-  const fetchSpaces = async () => {
+  const fetchSpaces = useCallback(async () => {
     try {
       setLoading(true)
       const params = new URLSearchParams({
@@ -41,7 +39,11 @@ export default function ExplorePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sortBy, searchTerm])
+
+  useEffect(() => {
+    fetchSpaces()
+  }, [fetchSpaces])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -50,7 +52,7 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar user={user} />
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header */}
@@ -62,6 +64,7 @@ export default function ExplorePage() {
               </p>
             </div>
             <CreateSpaceDialog 
+              user={user}
               trigger={
                 <Button>
                   <Plus className="h-4 w-4 mr-2" />
@@ -145,5 +148,13 @@ export default function ExplorePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ExplorePage() {
+  return (
+    <AuthWrapper fallback={<Loading />}>
+      {({ user }) => <ExplorePageContent user={user} />}
+    </AuthWrapper>
   )
 }

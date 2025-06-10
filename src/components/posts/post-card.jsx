@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useUser } from '@stackframe/stack'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { CommentSection } from './comment-section'
 import { 
   ArrowUp, 
   ArrowDown, 
@@ -16,14 +16,14 @@ import {
 import { formatTimeAgo } from '@/lib/utils'
 import Link from 'next/link'
 
-export function PostCard({ post, showSpace = true }) {
-  const user = useUser()
+export function PostCard({ post, user, showSpace = true }) {
   const [votes, setVotes] = useState({
     upvotes: post.upvotes,
     downvotes: post.downvotes,
     userVote: null
   })
   const [isVoting, setIsVoting] = useState(false)
+  const [showComments, setShowComments] = useState(false)
 
   useEffect(() => {
     // Fetch user's vote for this post
@@ -146,7 +146,12 @@ export function PostCard({ post, showSpace = true }) {
             </div>
 
             <div className="flex items-center space-x-4 pt-2">
-              <Button variant="ghost" size="sm" className="h-8 space-x-1">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 space-x-1"
+                onClick={() => setShowComments(!showComments)}
+              >
                 <MessageCircle className="h-4 w-4" />
                 <span>{post._count?.comments || 0}</span>
               </Button>
@@ -159,6 +164,13 @@ export function PostCard({ post, showSpace = true }) {
             </div>
           </div>
         </div>
+        
+        {/* Comments Section */}
+        {showComments && (
+          <div className="border-t">
+            <CommentSection postId={post.id} user={user} />
+          </div>
+        )}
       </CardContent>
     </Card>
   )

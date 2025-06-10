@@ -1,14 +1,12 @@
 'use client'
 
-import { useUser } from '@stackframe/stack'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Users, TrendingUp, Hash } from 'lucide-react'
 import Link from 'next/link'
 
-export function Sidebar() {
-  const user = useUser()
+export function Sidebar({ user }) {
 
   const trendingSpaces = [
     { name: 'Tech Talk', members: 15420, slug: 'tech-talk' },

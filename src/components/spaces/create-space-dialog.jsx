@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@stackframe/stack'
 import { 
   Dialog, 
   DialogContent, 
@@ -16,8 +15,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Plus, Globe, Lock, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-export function CreateSpaceDialog({ trigger }) {
-  const user = useUser()
+export function CreateSpaceDialog({ user, trigger }) {
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)

@@ -1,7 +1,5 @@
 import { Inter } from "next/font/google";
 import { StackProvider, StackTheme } from "@stackframe/stack";
-import { stackServerApp } from "../stack";
-import { StackProvider, StackTheme } from "@stackframe/stack";
 import { stackServerApp } from "@/lib/stack";
 import "./globals.css";
 
@@ -18,12 +16,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="light">
-      <body className={`${inter.variable} font-sans antialiased`}><StackProvider app={stackServerApp}><StackTheme>
+      <body className={`${inter.variable} font-sans antialiased`}>
         <StackProvider app={stackServerApp}>
           <StackTheme>
             {children}
-          </StackTheme>
-        </StackProvider>
       </StackTheme></StackProvider></body>
     </html>
   );

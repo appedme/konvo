@@ -1,15 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useUser } from '@stackframe/stack'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Image, Link as LinkIcon, Type } from 'lucide-react'
 
-export function CreatePost({ spaceId = null, onPostCreated }) {
-  const user = useUser()
+export function CreatePost({ user, spaceId = null, onPostCreated }) {
   const [content, setContent] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [postType, setPostType] = useState('TEXT')

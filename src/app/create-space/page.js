@@ -1,20 +1,19 @@
 'use client'
 
-import { useUser } from '@stackframe/stack'
 import { Navbar } from '@/components/layout/navbar'
 import { CreateSpaceDialog } from '@/components/spaces/create-space-dialog'
+import { AuthWrapper } from '@/components/auth/auth-wrapper'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { ArrowLeft, Plus } from 'lucide-react'
+import Loading from '@/components/ui/loading'
 
-export default function CreateSpacePage() {
-  const user = useUser()
-
+function CreateSpaceContent({ user }) {
   if (!user) {
     return (
       <div className="min-h-screen bg-background">
-        <Navbar />
+        <Navbar user={user} />
         <div className="container mx-auto px-4 py-8">
           <Card className="max-w-md mx-auto">
             <CardContent className="text-center py-8">
@@ -34,7 +33,7 @@ export default function CreateSpacePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar user={user} />
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Header */}
@@ -55,6 +54,7 @@ export default function CreateSpacePage() {
           {/* Quick Create */}
           <div className="text-center">
             <CreateSpaceDialog 
+              user={user}
               trigger={
                 <Button size="lg" className="px-8">
                   <Plus className="h-5 w-5 mr-2" />
@@ -144,5 +144,13 @@ export default function CreateSpacePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CreateSpacePage() {
+  return (
+    <AuthWrapper fallback={<Loading />}>
+      {({ user }) => <CreateSpaceContent user={user} />}
+    </AuthWrapper>
   )
 }
