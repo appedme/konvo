@@ -180,7 +180,7 @@ function CommentItem({ comment, user, onReply }) {
           {comment.author.displayName?.[0] || comment.author.username?.[0] || 'U'}
         </AvatarFallback>
       </Avatar>
-      
+
       <div className="flex-1 space-y-2">
         <div className="flex items-center space-x-2 text-sm">
           <span className="font-medium">
@@ -190,9 +190,9 @@ function CommentItem({ comment, user, onReply }) {
             {formatTimeAgo(comment.createdAt)}
           </span>
         </div>
-        
+
         <div className="text-sm whitespace-pre-wrap">{comment.content}</div>
-        
+
         <div className="flex items-center space-x-2">
           <Button
             variant="ghost"
@@ -202,7 +202,7 @@ function CommentItem({ comment, user, onReply }) {
             <ArrowUp className="h-4 w-4 mr-1" />
             <span className="text-xs">0</span>
           </Button>
-          
+
           <Button
             variant="ghost"
             size="sm"
@@ -211,7 +211,7 @@ function CommentItem({ comment, user, onReply }) {
             <ArrowDown className="h-4 w-4 mr-1" />
             <span className="text-xs">0</span>
           </Button>
-          
+
           {user && (
             <Button
               variant="ghost"
@@ -223,7 +223,7 @@ function CommentItem({ comment, user, onReply }) {
               <span className="text-xs">Reply</span>
             </Button>
           )}
-          
+
           {comment._count.replies > 0 && (
             <Button
               variant="ghost"

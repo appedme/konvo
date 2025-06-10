@@ -9,7 +9,7 @@ export async function POST(request, { params }) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
 
-        const spaceId = params.id
+        const { id: spaceId } = await params
 
         // Get or create user in our database
         let dbUser = await prisma.user.findUnique({

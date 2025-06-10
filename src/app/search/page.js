@@ -147,29 +147,31 @@ function SearchPageContent({ user }) {
                       {results.users.map((userResult) => (
                         <Card key={userResult.id}>
                           <CardContent className="p-4">
-                            <div className="flex items-start space-x-3">
-                              <Avatar className="h-12 w-12">
-                                <AvatarImage src={userResult.avatar} />
-                                <AvatarFallback>
-                                  {userResult.displayName?.[0] || userResult.username?.[0] || 'U'}
-                                </AvatarFallback>
-                              </Avatar>
-                              <div className="flex-1">
-                                <h3 className="font-semibold">
-                                  {userResult.displayName || userResult.username}
-                                </h3>
-                                <p className="text-sm text-muted-foreground">
-                                  @{userResult.username}
-                                </p>
-                                {userResult.bio && (
-                                  <p className="text-sm mt-1">{userResult.bio}</p>
-                                )}
-                                <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
-                                  <span>{userResult._count.posts} posts</span>
-                                  <span>{userResult._count.followers} followers</span>
+                            <a href={`/u/${userResult.username}`} className="block">
+                              <div className="flex items-start space-x-3">
+                                <Avatar className="h-12 w-12">
+                                  <AvatarImage src={userResult.avatar} />
+                                  <AvatarFallback>
+                                    {userResult.displayName?.[0] || userResult.username?.[0] || 'U'}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1">
+                                  <h3 className="font-semibold hover:underline">
+                                    {userResult.displayName || userResult.username}
+                                  </h3>
+                                  <p className="text-sm text-muted-foreground">
+                                    @{userResult.username}
+                                  </p>
+                                  {userResult.bio && (
+                                    <p className="text-sm mt-1">{userResult.bio}</p>
+                                  )}
+                                  <div className="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
+                                    <span>{userResult._count.posts} posts</span>
+                                    <span>{userResult._count.followers} followers</span>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
+                            </a>
                           </CardContent>
                         </Card>
                       ))}
@@ -178,18 +180,18 @@ function SearchPageContent({ user }) {
                 )}
 
                 {/* No Results */}
-                {results && 
-                 Object.values(results).every(arr => arr.length === 0) && (
-                  <Card>
-                    <CardContent className="text-center py-8">
-                      <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold mb-2">No results found</h3>
-                      <p className="text-muted-foreground">
-                        Try adjusting your search terms or check the spelling
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
+                {results &&
+                  Object.values(results).every(arr => arr.length === 0) && (
+                    <Card>
+                      <CardContent className="text-center py-8">
+                        <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <h3 className="text-lg font-semibold mb-2">No results found</h3>
+                        <p className="text-muted-foreground">
+                          Try adjusting your search terms or check the spelling
+                        </p>
+                      </CardContent>
+                    </Card>
+                  )}
               </>
             )}
           </div>

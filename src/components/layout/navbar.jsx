@@ -14,8 +14,31 @@ export function Navbar({ user }) {
   const [searchResults, setSearchResults] = useState(null)
   const [showResults, setShowResults] = useState(false)
   const [searchLoading, setSearchLoading] = useState(false)
+  const [notificationCount, setNotificationCount] = useState(0)
   const searchRef = useRef(null)
   const router = useRouter()
+
+  // Fetch notification count for authenticated users
+  useEffect(() => {
+    if (user) {
+      fetchNotificationCount()
+      // Poll for new notifications every 30 seconds
+      const interval = setInterval(fetchNotificationCount, 30000)
+      return () => clearInterval(interval)
+    }
+  }, [user])
+
+  const fetchNotificationCount = async () => {
+    try {
+      const response = await fetch('/api/notifications?unread=true&limit=1')
+      if (response.ok) {
+        const data = await response.json()
+        setNotificationCount(data.unreadCount)
+      }
+    } catch (error) {
+      console.error('Error fetching notification count:', error)
+    }
+  }
 
   // Debounced search
   useEffect(() => {
@@ -76,7 +99,7 @@ export function Navbar({ user }) {
             <span className="hidden font-bold sm:inline-block">Konvo</span>
           </Link>
         </div>
-        
+
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
           <div className="w-full flex-1 md:w-auto md:flex-none relative" ref={searchRef}>
             <form onSubmit={handleSearchSubmit}>
@@ -92,7 +115,7 @@ export function Navbar({ user }) {
                 />
               </div>
             </form>
-            
+
             {/* Search Results Dropdown */}
             {showResults && (searchResults || searchLoading) && (
               <Card className="absolute top-full mt-1 w-full z-50 max-h-96 overflow-y-auto">
@@ -131,7 +154,7 @@ export function Navbar({ user }) {
                           ))}
                         </div>
                       )}
-                      
+
                       {/* Posts */}
                       {searchResults?.posts?.length > 0 && (
                         <div>
@@ -151,7 +174,7 @@ export function Navbar({ user }) {
                           ))}
                         </div>
                       )}
-                      
+
                       {/* Users */}
                       {searchResults?.users?.length > 0 && (
                         <div>
@@ -179,7 +202,7 @@ export function Navbar({ user }) {
                           ))}
                         </div>
                       )}
-                      
+
                       {searchQuery.trim() && (
                         <Link
                           href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
@@ -195,7 +218,7 @@ export function Navbar({ user }) {
               </Card>
             )}
           </div>
-          
+
           <nav className="flex items-center space-x-1">
             {user ? (
               <>
@@ -211,10 +234,17 @@ export function Navbar({ user }) {
                     <span className="sr-only">Explore</span>
                   </Link>
                 </Button>
-                <Button variant="ghost" size="icon" asChild>
+                <Button variant="ghost" size="icon" asChild className="relative">
                   <Link href="/notifications">
                     <Bell className="h-4 w-4" />
-                    <span className="sr-only">Notifications</span>
+                    {notificationCount > 0 && (
+                      <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                        {notificationCount > 99 ? '99+' : notificationCount}
+                      </span>
+                    )}
+                    <span className="sr-only">
+                      Notifications {notificationCount > 0 && `(${notificationCount})`}
+                    </span>
                   </Link>
                 </Button>
                 <Button variant="ghost" size="icon" asChild>

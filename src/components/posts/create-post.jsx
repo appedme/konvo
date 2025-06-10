@@ -61,7 +61,7 @@ export function CreatePost({ user, spaceId = null, onPostCreated }) {
                 onChange={(e) => setContent(e.target.value)}
                 className="min-h-[100px] resize-none border-0 p-0 text-lg placeholder:text-muted-foreground focus-visible:ring-0"
               />
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex space-x-1">
                   <Button
@@ -92,7 +92,7 @@ export function CreatePost({ user, spaceId = null, onPostCreated }) {
                     Link
                   </Button>
                 </div>
-                
+
                 <Button
                   type="submit"
                   disabled={!content.trim() || isLoading}

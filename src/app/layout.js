@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         <StackProvider app={stackServerApp}>
           <StackTheme>
             {children}
-      </StackTheme></StackProvider></body>
+          </StackTheme></StackProvider></body>
     </html>
   );
 }

@@ -223,10 +223,10 @@ function SpacePageContent({ user }) {
                             </Button>
                         </div>
 
-            {/* Create Post */}
-            {user && isMember && (
-              <CreatePost user={user} spaceId={space.id} onPostCreated={handlePostCreated} />
-            )}
+                        {/* Create Post */}
+                        {user && isMember && (
+                            <CreatePost user={user} spaceId={space.id} onPostCreated={handlePostCreated} />
+                        )}
 
                         {/* Posts Feed */}
                         <div className="space-y-4">
@@ -243,11 +243,11 @@ function SpacePageContent({ user }) {
                                         </p>
                                     </CardContent>
                                 </Card>
-              ) : (
-                posts.map((post) => (
-                  <PostCard key={post.id} post={post} user={user} showSpace={false} />
-                ))
-              )}
+                            ) : (
+                                posts.map((post) => (
+                                    <PostCard key={post.id} post={post} user={user} showSpace={false} />
+                                ))
+                            )}
                         </div>
                     </main>
 
@@ -302,9 +302,9 @@ function SpacePageContent({ user }) {
 }
 
 export default function SpacePage() {
-  return (
-    <AuthWrapper fallback={<Loading />}>
-      {({ user }) => <SpacePageContent user={user} />}
-    </AuthWrapper>
-  )
+    return (
+        <AuthWrapper fallback={<Loading />}>
+            {({ user }) => <SpacePageContent user={user} />}
+        </AuthWrapper>
+    )
 }

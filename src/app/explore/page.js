@@ -24,7 +24,7 @@ function ExplorePageContent({ user }) {
         type: sortBy,
         limit: '50'
       })
-      
+
       if (searchTerm) {
         params.append('search', searchTerm)
       }
@@ -63,7 +63,7 @@ function ExplorePageContent({ user }) {
                 Discover communities and join the conversation
               </p>
             </div>
-            <CreateSpaceDialog 
+            <CreateSpaceDialog
               user={user}
               trigger={
                 <Button>
@@ -88,7 +88,7 @@ function ExplorePageContent({ user }) {
                     className="pl-10"
                   />
                 </div>
-                
+
                 <div className="flex space-x-2">
                   <Button
                     type="button"
@@ -126,7 +126,7 @@ function ExplorePageContent({ user }) {
                     {searchTerm ? 'No spaces found matching your search.' : 'No spaces available yet.'}
                   </p>
                   {!searchTerm && (
-                    <CreateSpaceDialog 
+                    <CreateSpaceDialog
                       trigger={
                         <Button className="mt-4">
                           <Plus className="h-4 w-4 mr-2" />

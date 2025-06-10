@@ -25,18 +25,16 @@ export async function GET(request) {
                     OR: [
                         {
                             content: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         },
                         {
                             title: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         }
                     ],
-                    isActive: true
+                    status: 'PUBLISHED'
                 },
                 include: {
                     author: {
@@ -77,14 +75,12 @@ export async function GET(request) {
                     OR: [
                         {
                             name: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         },
                         {
                             description: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         }
                     ],
@@ -122,14 +118,12 @@ export async function GET(request) {
                     OR: [
                         {
                             username: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         },
                         {
                             displayName: {
-                                contains: searchTerm,
-                                mode: 'insensitive'
+                                contains: searchTerm
                             }
                         }
                     ]

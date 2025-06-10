@@ -2,12 +2,12 @@
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { 
-  MessageSquare, 
-  TrendingUp, 
-  Clock, 
-  Users, 
-  Shield, 
+import {
+  MessageSquare,
+  TrendingUp,
+  Clock,
+  Users,
+  Shield,
   Zap,
   Heart,
   Star
@@ -81,11 +81,11 @@ export function LandingPage() {
               Start Your Space.
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Join Konvo, the modern community platform where you can create, join, and grow Spaces — 
+              Join Konvo, the modern community platform where you can create, join, and grow Spaces —
               safe environments for open, unrestricted conversation.
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
               <Link href="/auth/signup">Get Started Free</Link>
@@ -122,7 +122,7 @@ export function LandingPage() {
               Built with modern technology and community-first principles
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
               <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow">
@@ -150,7 +150,7 @@ export function LandingPage() {
               Join thousands of users who have made Konvo their home
             </p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {testimonials.map((testimonial, index) => (
               <Card key={index} className="border-0 shadow-sm">

@@ -103,7 +103,7 @@ export async function GET(request) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const search = searchParams.get('search')
     const type = searchParams.get('type') // 'popular', 'recent', 'joined'
-    
+
     const skip = (page - 1) * limit
 
     let where = {
@@ -123,7 +123,7 @@ export async function GET(request) {
     }
 
     let orderBy = { createdAt: 'desc' }
-    
+
     if (type === 'popular') {
       orderBy = { memberCount: 'desc' }
     }

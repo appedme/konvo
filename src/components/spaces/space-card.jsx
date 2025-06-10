@@ -29,10 +29,10 @@ export function SpaceCard({ space, showJoinButton = true }) {
               {space.name[0]?.toUpperCase()}
             </span>
           </div>
-          
+
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2">
-              <Link 
+              <Link
                 href={`/s/${space.slug}`}
                 className="font-semibold hover:underline truncate"
               >
@@ -40,13 +40,13 @@ export function SpaceCard({ space, showJoinButton = true }) {
               </Link>
               <SpaceIcon className="h-4 w-4 text-muted-foreground" />
             </div>
-            
+
             {space.description && (
               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                 {space.description}
               </p>
             )}
-            
+
             <div className="flex items-center space-x-4 mt-2 text-xs text-muted-foreground">
               <div className="flex items-center space-x-1">
                 <Users className="h-3 w-3" />
@@ -58,7 +58,7 @@ export function SpaceCard({ space, showJoinButton = true }) {
               </div>
             </div>
           </div>
-          
+
           {showJoinButton && (
             <Button size="sm" variant="outline">
               Join

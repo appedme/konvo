@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -95,7 +95,7 @@ export function CreateSpaceDialog({ user, trigger }) {
         <DialogHeader>
           <DialogTitle>Create a New Space</DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="text-sm font-medium">Space Name</label>
@@ -131,9 +131,8 @@ export function CreateSpaceDialog({ user, trigger }) {
               {spaceTypes.map((type) => (
                 <Card
                   key={type.value}
-                  className={`cursor-pointer transition-colors ${
-                    formData.type === type.value ? 'ring-2 ring-primary' : ''
-                  }`}
+                  className={`cursor-pointer transition-colors ${formData.type === type.value ? 'ring-2 ring-primary' : ''
+                    }`}
                   onClick={() => setFormData(prev => ({ ...prev, type: type.value }))}
                 >
                   <CardContent className="p-3">

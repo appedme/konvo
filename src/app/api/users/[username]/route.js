@@ -4,8 +4,8 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request, { params }) {
     try {
-        const username = params.username
-        
+        const { username } = await params
+
         const user = await prisma.user.findUnique({
             where: { username },
             select: {

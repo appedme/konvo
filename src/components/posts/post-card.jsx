@@ -5,11 +5,11 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CommentSection } from './comment-section'
-import { 
-  ArrowUp, 
-  ArrowDown, 
-  MessageCircle, 
-  Share, 
+import {
+  ArrowUp,
+  ArrowDown,
+  MessageCircle,
+  Share,
   MoreHorizontal,
   Clock
 } from 'lucide-react'
@@ -82,22 +82,21 @@ export function PostCard({ post, user, showSpace = true }) {
             <Button
               variant="ghost"
               size="sm"
-              className={`h-8 w-8 p-0 ${votes.userVote === 'UP' ? 'text-orange-500' : ''}`}
-              onClick={() => handleVote('UP')}
+              className={`h-8 w-8 p-0 ${votes.userVote === 'UPVOTE' ? 'text-orange-500' : ''}`}
+              onClick={() => handleVote('UPVOTE')}
               disabled={isVoting}
             >
               <ArrowUp className="h-4 w-4" />
             </Button>
-            <span className={`text-sm font-medium ${
-              score > 0 ? 'text-orange-500' : score < 0 ? 'text-blue-500' : ''
-            }`}>
+            <span className={`text-sm font-medium ${score > 0 ? 'text-orange-500' : score < 0 ? 'text-blue-500' : ''
+              }`}>
               {score}
             </span>
             <Button
               variant="ghost"
               size="sm"
-              className={`h-8 w-8 p-0 ${votes.userVote === 'DOWN' ? 'text-blue-500' : ''}`}
-              onClick={() => handleVote('DOWN')}
+              className={`h-8 w-8 p-0 ${votes.userVote === 'DOWNVOTE' ? 'text-blue-500' : ''}`}
+              onClick={() => handleVote('DOWNVOTE')}
               disabled={isVoting}
             >
               <ArrowDown className="h-4 w-4" />
@@ -108,7 +107,7 @@ export function PostCard({ post, user, showSpace = true }) {
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               {showSpace && post.space && (
                 <>
-                  <Link 
+                  <Link
                     href={`/s/${post.space.slug}`}
                     className="font-medium hover:underline"
                   >
@@ -146,9 +145,9 @@ export function PostCard({ post, user, showSpace = true }) {
             </div>
 
             <div className="flex items-center space-x-4 pt-2">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-8 space-x-1"
                 onClick={() => setShowComments(!showComments)}
               >
@@ -164,7 +163,7 @@ export function PostCard({ post, user, showSpace = true }) {
             </div>
           </div>
         </div>
-        
+
         {/* Comments Section */}
         {showComments && (
           <div className="border-t">

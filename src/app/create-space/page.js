@@ -53,7 +53,7 @@ function CreateSpaceContent({ user }) {
 
           {/* Quick Create */}
           <div className="text-center">
-            <CreateSpaceDialog 
+            <CreateSpaceDialog
               user={user}
               trigger={
                 <Button size="lg" className="px-8">

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { stackServerApp } from '@/lib/stack'
 import { prisma } from '@/lib/prisma'
+import { createNotification, getPostAuthor } from '@/lib/notifications'
 
 export async function POST(request, { params }) {
   try {
@@ -10,9 +11,9 @@ export async function POST(request, { params }) {
     }
 
     const { type } = await request.json()
-    const postId = params.id
+    const { id: postId } = await params
 
-    if (!['UP', 'DOWN'].includes(type)) {
+    if (!['UPVOTE', 'DOWNVOTE'].includes(type)) {
       return NextResponse.json({ error: 'Invalid vote type' }, { status: 400 })
     }
 
@@ -53,8 +54,8 @@ export async function POST(request, { params }) {
         await prisma.vote.delete({
           where: { id: existingVote.id }
         })
-        
-        if (type === 'UP') {
+
+        if (type === 'UPVOTE') {
           upvoteDiff = -1
         } else {
           downvoteDiff = -1
@@ -65,9 +66,9 @@ export async function POST(request, { params }) {
           where: { id: existingVote.id },
           data: { type }
         })
-        
+
         userVote = type
-        if (type === 'UP') {
+        if (type === 'UPVOTE') {
           upvoteDiff = 1
           downvoteDiff = -1
         } else {
@@ -84,9 +85,9 @@ export async function POST(request, { params }) {
           postId: postId
         }
       })
-      
+
       userVote = type
-      if (type === 'UP') {
+      if (type === 'UPVOTE') {
         upvoteDiff = 1
       } else {
         downvoteDiff = 1
@@ -99,9 +100,23 @@ export async function POST(request, { params }) {
       data: {
         upvotes: { increment: upvoteDiff },
         downvotes: { increment: downvoteDiff },
-        score: { increment: (type === 'UP' ? upvoteDiff : -downvoteDiff) }
+        score: { increment: (type === 'UPVOTE' ? upvoteDiff : -downvoteDiff) }
       }
     })
+
+    // Create notification for upvotes (only for new upvotes, not downgrades)
+    if (type === 'UPVOTE' && upvoteDiff > 0) {
+      const postAuthorId = await getPostAuthor(postId)
+      if (postAuthorId && postAuthorId !== dbUser.id) {
+        await createNotification({
+          userId: postAuthorId,
+          actorId: dbUser.id,
+          type: 'VOTE',
+          postId,
+          data: { voteType: 'UPVOTE' }
+        })
+      }
+    }
 
     return NextResponse.json({
       upvotes: updatedPost.upvotes,
@@ -121,7 +136,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ vote: null })
     }
 
-    const postId = params.id
+    const { id: postId } = await params
 
     // Get user from our database
     const dbUser = await prisma.user.findUnique({

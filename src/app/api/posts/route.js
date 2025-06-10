@@ -52,7 +52,7 @@ export async function POST(request) {
 
       // For private spaces, posts start as pending
       const status = membership.space.type === 'PRIVATE' ? 'PENDING' : 'PUBLISHED'
-      
+
       const post = await prisma.post.create({
         data: {
           title,
@@ -156,7 +156,7 @@ export async function GET(request) {
     }
 
     let orderBy = { createdAt: 'desc' }
-    
+
     if (type === 'popular') {
       orderBy = { score: 'desc' }
     }

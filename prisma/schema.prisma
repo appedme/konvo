@@ -11,26 +11,27 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  stackId   String   @unique
-  email     String   @unique
-  username  String   @unique
+  id          String   @id @default(cuid())
+  stackId     String   @unique
+  email       String   @unique
+  username    String   @unique
   displayName String?
-  avatar    String?
-  bio       String?
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  avatar      String?
+  bio         String?
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relationships
-  posts         Post[]
-  votes         Vote[]
-  comments      Comment[]
-  spaces        SpaceMember[]
-  ownedSpaces   Space[]       @relation("SpaceOwner")
-  followers     Follow[]      @relation("Following")
-  following     Follow[]      @relation("Follower")
-  notifications Notification[]
+  posts              Post[]
+  votes              Vote[]
+  comments           Comment[]
+  spaces             SpaceMember[]
+  ownedSpaces        Space[]        @relation("SpaceOwner")
+  followers          Follow[]       @relation("Following")
+  following          Follow[]       @relation("Follower")
+  notifications      Notification[]
+  actorNotifications Notification[] @relation("NotificationActor")
 
   @@map("users")
 }
@@ -55,16 +56,17 @@ model Space {
   owner   User   @relation("SpaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
 
   // Relationships
-  members SpaceMember[]
-  posts   Post[]
+  members       SpaceMember[]
+  posts         Post[]
+  notifications Notification[]
 
   @@map("spaces")
 }
 
 model SpaceMember {
-  id      String          @id @default(cuid())
-  role    SpaceMemberRole @default(MEMBER)
-  joinedAt DateTime       @default(now())
+  id       String          @id @default(cuid())
+  role     SpaceMemberRole @default(MEMBER)
+  joinedAt DateTime        @default(now())
 
   // Foreign keys
   userId  String
@@ -77,28 +79,29 @@ model SpaceMember {
 }
 
 model Post {
-  id        String     @id @default(cuid())
-  title     String?
-  content   String     @db.Text
-  images    Json?
-  type      PostType   @default(TEXT)
-  status    PostStatus @default(PUBLISHED)
-  upvotes   Int        @default(0)
-  downvotes Int        @default(0)
-  score     Int        @default(0)
-  isAnonymous Boolean  @default(false)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(cuid())
+  title       String?
+  content     String     @db.Text
+  images      Json?
+  type        PostType   @default(TEXT)
+  status      PostStatus @default(PUBLISHED)
+  upvotes     Int        @default(0)
+  downvotes   Int        @default(0)
+  score       Int        @default(0)
+  isAnonymous Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   // Foreign keys
   authorId String?
   spaceId  String?
-  author   User?  @relation(fields: [authorId], references: [id], onDelete: SetNull)
-  space    Space? @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  space    Space?  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 
   // Relationships
-  votes    Vote[]
-  comments Comment[]
+  votes         Vote[]
+  comments      Comment[]
+  notifications Notification[]
 
   @@map("posts")
 }
@@ -121,15 +124,16 @@ model Comment {
   parent   Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
 
   // Relationships
-  replies Comment[] @relation("CommentReplies")
-  votes   Vote[]
+  replies       Comment[]      @relation("CommentReplies")
+  votes         Vote[]
+  notifications Notification[]
 
   @@map("comments")
 }
 
 model Vote {
-  id   String   @id @default(cuid())
-  type VoteType
+  id        String   @id @default(cuid())
+  type      VoteType
   createdAt DateTime @default(now())
 
   // Foreign keys
@@ -160,17 +164,25 @@ model Follow {
 }
 
 model Notification {
-  id      String           @id @default(cuid())
-  type    NotificationType
-  title   String
-  message String
-  isRead  Boolean          @default(false)
-  data    Json?
-  createdAt DateTime       @default(now())
+  id        String           @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean          @default(false)
+  data      Json?
+  createdAt DateTime         @default(now())
 
   // Foreign keys
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  actorId   String?
+  postId    String?
+  commentId String?
+  spaceId   String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  actor     User?    @relation("NotificationActor", fields: [actorId], references: [id], onDelete: SetNull)
+  post      Post?    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  space     Space?   @relation(fields: [spaceId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
 }
@@ -202,15 +214,14 @@ enum PostStatus {
 }
 
 enum VoteType {
-  UP
-  DOWN
+  UPVOTE
+  DOWNVOTE
 }
 
 enum NotificationType {
+  COMMENT
+  VOTE
   FOLLOW
+  SPACE_JOIN
   MENTION
-  REPLY
-  SPACE_INVITE
-  POST_APPROVED
-  POST_REJECTED
 }

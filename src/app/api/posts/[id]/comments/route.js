@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server'
 import { stackServerApp } from '@/lib/stack'
 import { prisma } from '@/lib/prisma'
+import { createNotification, getPostAuthor } from '@/lib/notifications'
 
 export async function GET(request, { params }) {
     try {
-        const postId = params.id
+        const { id: postId } = await params
         const { searchParams } = new URL(request.url)
         const page = parseInt(searchParams.get('page') || '1')
         const limit = parseInt(searchParams.get('limit') || '20')
@@ -65,7 +66,7 @@ export async function POST(request, { params }) {
             )
         }
 
-        const postId = params.id
+        const { id: postId } = await params
         const body = await request.json()
         const { content, parentId } = body
 
@@ -124,6 +125,20 @@ export async function POST(request, { params }) {
                 }
             }
         })
+
+        // Create notification for post author (if not commenting on own post)
+        if (!parentId) {
+            const postAuthorId = await getPostAuthor(postId)
+            if (postAuthorId && postAuthorId !== dbUser.id) {
+                await createNotification({
+                    userId: postAuthorId,
+                    actorId: dbUser.id,
+                    type: 'COMMENT',
+                    postId,
+                    commentId: comment.id
+                })
+            }
+        }
 
         return NextResponse.json({ comment }, { status: 201 })
     } catch (error) {

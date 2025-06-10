@@ -53,11 +53,11 @@ export default function Home() {
                 Start Your Space.
               </h1>
               <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Join Konvo, the modern community platform where you can create, join, and grow Spaces — 
+                Join Konvo, the modern community platform where you can create, join, and grow Spaces —
                 safe environments for open, unrestricted conversation.
               </p>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
                 <Link href="/auth/signup">Get Started</Link>

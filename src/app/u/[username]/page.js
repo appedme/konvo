@@ -9,10 +9,10 @@ import { AuthWrapper } from '@/components/auth/auth-wrapper'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { 
-  Calendar, 
-  MapPin, 
-  Link as LinkIcon, 
+import {
+  Calendar,
+  MapPin,
+  Link as LinkIcon,
   Shield,
   FileText,
   Users,
@@ -23,7 +23,7 @@ import Loading from '@/components/ui/loading'
 function UserProfileContent({ user: currentUser }) {
   const params = useParams()
   const username = params.username
-  
+
   const [profileData, setProfileData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('posts')
@@ -103,7 +103,7 @@ function UserProfileContent({ user: currentUser }) {
                     {user.displayName?.[0] || user.username?.[0] || 'U'}
                   </AvatarFallback>
                 </Avatar>
-                
+
                 <div className="flex-1 text-center md:text-left">
                   <div className="flex flex-col md:flex-row md:items-center md:space-x-2 mb-2">
                     <h1 className="text-2xl font-bold">
@@ -113,20 +113,20 @@ function UserProfileContent({ user: currentUser }) {
                       <Shield className="h-5 w-5 text-blue-500" title="Verified" />
                     )}
                   </div>
-                  
+
                   <p className="text-muted-foreground mb-3">@{user.username}</p>
-                  
+
                   {user.bio && (
                     <p className="mb-4">{user.bio}</p>
                   )}
-                  
+
                   <div className="flex flex-wrap justify-center md:justify-start gap-4 text-sm text-muted-foreground mb-4">
                     <div className="flex items-center space-x-1">
                       <Calendar className="h-4 w-4" />
                       <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex justify-center md:justify-start space-x-6 text-sm">
                     <div>
                       <span className="font-semibold">{user._count.posts}</span>
@@ -142,7 +142,7 @@ function UserProfileContent({ user: currentUser }) {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex justify-center md:justify-end">
                   {currentUser?.primaryEmail && currentUser.primaryEmail.split('@')[0] !== user.username ? (
                     <Button>Follow</Button>
@@ -182,8 +182,8 @@ function UserProfileContent({ user: currentUser }) {
                     <CardContent className="text-center py-8">
                       <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">
-                        {user.username === currentUser?.primaryEmail?.split('@')[0] 
-                          ? "You haven't posted anything yet" 
+                        {user.username === currentUser?.primaryEmail?.split('@')[0]
+                          ? "You haven't posted anything yet"
                           : `${user.displayName || user.username} hasn't posted anything yet`}
                       </p>
                     </CardContent>
@@ -203,8 +203,8 @@ function UserProfileContent({ user: currentUser }) {
                     <CardContent className="text-center py-8">
                       <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <p className="text-muted-foreground">
-                        {user.username === currentUser?.primaryEmail?.split('@')[0] 
-                          ? "You haven't joined any spaces yet" 
+                        {user.username === currentUser?.primaryEmail?.split('@')[0]
+                          ? "You haven't joined any spaces yet"
                           : `${user.displayName || user.username} hasn't joined any spaces yet`}
                       </p>
                     </CardContent>
