@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { stackServerApp } from '@/lib/stack'
 import { prisma } from '@/lib/prisma'
 
 export async function GET(request, { params }) {
@@ -46,12 +47,16 @@ export async function GET(request, { params }) {
       )
     }
 
+    // For now, return space data without auth-dependent fields
+    // The client will handle membership checks using working auth context
     return NextResponse.json({
       space: {
         ...space,
         memberCount: space._count.members,
         postCount: space._count.posts
-      }
+      },
+      isMember: false, // Temporarily disable server-side auth check
+      isOwner: false   // Client will determine this
     })
 
   } catch (error) {

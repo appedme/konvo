@@ -31,7 +31,7 @@ async function ensureUniqueSlug(baseSlug) {
 
 export async function POST(request) {
   try {
-    const user = await stackServerApp.getUser()
+    const user = await stackServerApp.getUser({ request })
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }

@@ -5,7 +5,7 @@ import { createNotification, getPostAuthor } from '@/lib/notifications'
 
 export async function POST(request, { params }) {
   try {
-    const user = await stackServerApp.getUser()
+    const user = await stackServerApp.getUser({ request })
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
@@ -131,7 +131,7 @@ export async function POST(request, { params }) {
 
 export async function GET(request, { params }) {
   try {
-    const user = await stackServerApp.getUser()
+    const user = await stackServerApp.getUser({ request })
     if (!user) {
       return NextResponse.json({ vote: null })
     }

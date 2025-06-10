@@ -32,6 +32,23 @@ function SpacePageContent({ user }) {
     const [postsLoading, setPostsLoading] = useState(true)
     const [sortBy, setSortBy] = useState('recent')
     const [isMember, setIsMember] = useState(false)
+    const [isOwner, setIsOwner] = useState(false)
+
+    // Check membership when space and user data are available
+    useEffect(() => {
+        if (space && user) {
+            // Check if user is the owner
+            const userIsOwner = space.owner && space.owner.username === user.primaryEmail.split('@')[0]
+            setIsOwner(userIsOwner)
+            
+            // Check if user is a member (for now, owners are always members)
+            // In the future, this can check the members array
+            const userIsMember = userIsOwner || space.members?.some(member => 
+                member.user.username === user.primaryEmail.split('@')[0]
+            )
+            setIsMember(userIsMember)
+        }
+    }, [space, user])
 
     const fetchSpace = useCallback(async () => {
         try {
@@ -39,7 +56,8 @@ function SpacePageContent({ user }) {
             if (response.ok) {
                 const data = await response.json()
                 setSpace(data.space)
-                setIsMember(data.isMember)
+                // Don't use server-side membership check for now
+                // setIsMember(data.isMember)
             }
         } catch (error) {
             console.error('Error fetching space:', error)

@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET(request) {
     try {
-        const user = await stackServerApp.getUser()
+        const user = await stackServerApp.getUser({ request })
         if (!user) {
             return NextResponse.json(
                 { error: 'Authentication required' },
