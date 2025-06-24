@@ -60,9 +60,9 @@ export function SpaceCard({ space, showJoinButton = true }) {
           </div>
 
           {showJoinButton && (
-            <Button 
-              size="sm" 
-              variant="outline" 
+            <Button
+              size="sm"
+              variant="outline"
               className="btn-gradient border-0 text-white font-semibold px-6 hover:scale-105 transition-all duration-200 shadow-md"
             >
               Join

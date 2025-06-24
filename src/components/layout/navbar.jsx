@@ -70,12 +70,12 @@ export function Navbar({ user }) {
 
   const performSearch = async (query) => {
     if (!query.trim()) return
-    
+
     startTransition(async () => {
       try {
         const formData = new FormData()
         formData.append('query', query)
-        
+
         const result = await quickSearch(formData)
         if (result.success) {
           setSearchResults(result.data.results)

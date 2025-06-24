@@ -1,23 +1,24 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { Navbar } from '@/components/layout/navbar'
-import { PostCard } from '@/components/posts/post-card'
-import { SpaceCard } from '@/components/spaces/space-card'
-import { AuthWrapper } from '@/components/auth/auth-wrapper'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import {
+import Link from 'next/link'
+import { 
+  ArrowLeft,
   Calendar,
   MapPin,
   Link as LinkIcon,
-  Shield,
-  FileText,
   Users,
-  User
+  MessageSquare,
+  ArrowUp,
+  Trophy,
+  Star,
+  Edit
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import Loading from '@/components/ui/loading'
 
 function UserProfileContent({ user: currentUser }) {

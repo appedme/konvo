@@ -33,7 +33,7 @@ function SearchPageContent({ user }) {
         formData.append('query', searchQuery)
         formData.append('type', type)
         formData.append('limit', '50')
-        
+
         const result = await searchContent(formData)
         if (result.success) {
           setResults(result.data.results)
@@ -102,11 +102,10 @@ function SearchPageContent({ user }) {
                   key={tab.id}
                   variant={activeTab === tab.id ? 'default' : 'ghost'}
                   size="sm"
-                  className={`flex-1 transition-all duration-200 ${
-                    activeTab === tab.id 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg' 
+                  className={`flex-1 transition-all duration-200 ${activeTab === tab.id
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
                       : 'hover:bg-background/50'
-                  }`}
+                    }`}
                   onClick={() => setActiveTab(tab.id)}
                   disabled={isPending}
                 >

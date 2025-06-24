@@ -46,11 +46,10 @@ export function PostCard({ post, user, showSpace = true }) {
             <Button
               variant="ghost"
               size="sm"
-              className={`h-10 w-10 p-0 rounded-full transition-all duration-200 hover:scale-110 ${
-                userVote === 'UPVOTE' 
-                  ? 'text-orange-500 bg-orange-500/10 border border-orange-500/20' 
+              className={`h-10 w-10 p-0 rounded-full transition-all duration-200 hover:scale-110 ${userVote === 'UPVOTE'
+                  ? 'text-orange-500 bg-orange-500/10 border border-orange-500/20'
                   : 'hover:bg-orange-500/10 hover:text-orange-500'
-              }`}
+                }`}
               onClick={() => handleVote('UPVOTE')}
               disabled={isVoting}
             >
@@ -60,23 +59,21 @@ export function PostCard({ post, user, showSpace = true }) {
                 <ArrowUp className="h-5 w-5" />
               )}
             </Button>
-            <span className={`text-sm font-bold px-2 py-1 rounded-full transition-colors duration-200 ${
-              score > 0 
-                ? 'text-orange-500 bg-orange-500/10' 
-                : score < 0 
-                ? 'text-blue-500 bg-blue-500/10' 
-                : 'text-muted-foreground bg-muted/50'
-            }`}>
+            <span className={`text-sm font-bold px-2 py-1 rounded-full transition-colors duration-200 ${score > 0
+                ? 'text-orange-500 bg-orange-500/10'
+                : score < 0
+                  ? 'text-blue-500 bg-blue-500/10'
+                  : 'text-muted-foreground bg-muted/50'
+              }`}>
               {score}
             </span>
             <Button
               variant="ghost"
               size="sm"
-              className={`h-10 w-10 p-0 rounded-full transition-all duration-200 hover:scale-110 ${
-                userVote === 'DOWNVOTE' 
-                  ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20' 
+              className={`h-10 w-10 p-0 rounded-full transition-all duration-200 hover:scale-110 ${userVote === 'DOWNVOTE'
+                  ? 'text-blue-500 bg-blue-500/10 border border-blue-500/20'
                   : 'hover:bg-blue-500/10 hover:text-blue-500'
-              }`}
+                }`}
               onClick={() => handleVote('DOWNVOTE')}
               disabled={isVoting}
             >
@@ -139,16 +136,16 @@ export function PostCard({ post, user, showSpace = true }) {
                 <MessageCircle className="h-4 w-4" />
                 <span className="font-medium">{post._count?.comments || 0}</span>
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-9 text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-full px-4"
               >
                 <Share className="h-4 w-4" />
               </Button>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="h-9 ml-auto text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all duration-200 rounded-full px-3"
               >
                 <MoreHorizontal className="h-4 w-4" />

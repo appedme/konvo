@@ -32,7 +32,7 @@ function NotificationsContent({ user }) {
         limit: '50',
         ...(filter === 'unread' && { unread: 'true' })
       })
-      
+
       const response = await fetch(`/api/notifications?${params}`)
       if (response.ok) {
         const data = await response.json()

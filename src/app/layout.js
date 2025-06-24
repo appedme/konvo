@@ -32,7 +32,7 @@ export default function RootLayout({ children }) {
               <StackTheme>
                 <ErrorBoundary>
                   {children}
-                  <Toaster 
+                  <Toaster
                     position="bottom-right"
                     toastOptions={{
                       duration: 3000,

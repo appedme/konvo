@@ -11,27 +11,44 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  stackId     String   @unique
-  email       String   @unique
-  username    String   @unique
-  displayName String?
-  avatar      String?
-  bio         String?
-  verified    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              String    @id @default(cuid())
+  stackId         String    @unique
+  email           String    @unique
+  username        String    @unique
+  displayName     String?
+  avatar          String?
+  bio             String?
+  verified        Boolean   @default(false)
+  role            UserRole  @default(USER)
+  level           Int       @default(1)
+  totalUpvotes    Int       @default(0)
+  isBanned        Boolean   @default(false)
+  bannedReason    String?
+  bannedAt        DateTime?
+  bannedBy        String?
+  lastActiveAt    DateTime  @default(now())
+  emailVerified   Boolean   @default(false)
+  profileViews    Int       @default(0)
+  postCount       Int       @default(0)
+  commentCount    Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   // Relationships
   posts              Post[]
   votes              Vote[]
   comments           Comment[]
   spaces             SpaceMember[]
-  ownedSpaces        Space[]        @relation("SpaceOwner")
-  followers          Follow[]       @relation("Following")
-  following          Follow[]       @relation("Follower")
+  ownedSpaces        Space[]                @relation("SpaceOwner")
+  followers          Follow[]               @relation("Following")
+  following          Follow[]               @relation("Follower")
   notifications      Notification[]
-  actorNotifications Notification[] @relation("NotificationActor")
+  actorNotifications Notification[]         @relation("NotificationActor")
+  verificationReqs   VerificationRequest[]
+  moderationActions  ModerationAction[]
+  reports            Report[]               @relation("ReportedBy")
+  reportedContent    Report[]               @relation("ReportedUser")
+  activityLogs       ActivityLog[]
 
   @@map("users")
 }
@@ -48,6 +65,13 @@ model Space {
   memberCount Int       @default(0)
   postCount   Int       @default(0)
   isActive    Boolean   @default(true)
+  verified    Boolean   @default(false)
+  featured    Boolean   @default(false)
+  isBanned    Boolean   @default(false)
+  bannedReason String?
+  bannedAt    DateTime?
+  bannedBy    String?
+  views       Int       @default(0)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -56,9 +80,11 @@ model Space {
   owner   User   @relation("SpaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
 
   // Relationships
-  members       SpaceMember[]
-  posts         Post[]
-  notifications Notification[]
+  members           SpaceMember[]
+  posts             Post[]
+  notifications     Notification[]
+  verificationReqs  VerificationRequest[]
+  reports           Report[]              @relation("ReportedSpace")
 
   @@map("spaces")
 }
@@ -102,6 +128,7 @@ model Post {
   votes         Vote[]
   comments      Comment[]
   notifications Notification[]
+  reports       Report[]       @relation("ReportedPost")
 
   @@map("posts")
 }
@@ -127,6 +154,7 @@ model Comment {
   replies       Comment[]      @relation("CommentReplies")
   votes         Vote[]
   notifications Notification[]
+  reports       Report[]       @relation("ReportedComment")
 
   @@map("comments")
 }
@@ -187,6 +215,106 @@ model Notification {
   @@map("notifications")
 }
 
+model VerificationRequest {
+  id              String             @id @default(cuid())
+  type            String             // "user" or "space"
+  status          VerificationStatus @default(PENDING)
+  requestReason   String
+  documents       Json?              // Store file URLs/paths
+  adminNotes      String?
+  reviewedAt      DateTime?
+  reviewedBy      String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  // Foreign keys
+  userId  String?
+  spaceId String?
+  user    User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  space   Space?  @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@map("verification_requests")
+}
+
+model ModerationAction {
+  id          String               @id @default(cuid())
+  type        ModerationActionType
+  reason      String
+  description String?
+  duration    Int?                 // Duration in hours for temporary actions
+  expiresAt   DateTime?
+  isActive    Boolean              @default(true)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  // Foreign keys
+  moderatorId String
+  targetUserId String?
+  targetSpaceId String?
+  targetPostId String?
+  targetCommentId String?
+  moderator   User     @relation(fields: [moderatorId], references: [id], onDelete: Cascade)
+
+  @@map("moderation_actions")
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  type        ReportType
+  reason      String
+  description String?
+  status      ReportStatus @default(PENDING)
+  adminNotes  String?
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Foreign keys
+  reportedById  String
+  reportedUserId String?
+  reportedSpaceId String?
+  reportedPostId String?
+  reportedCommentId String?
+  reportedBy    User     @relation("ReportedBy", fields: [reportedById], references: [id], onDelete: Cascade)
+  reportedUser  User?    @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: Cascade)
+  reportedSpace Space?   @relation("ReportedSpace", fields: [reportedSpaceId], references: [id], onDelete: Cascade)
+  reportedPost  Post?    @relation("ReportedPost", fields: [reportedPostId], references: [id], onDelete: Cascade)
+  reportedComment Comment? @relation("ReportedComment", fields: [reportedCommentId], references: [id], onDelete: Cascade)
+
+  @@map("reports")
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  category  String   // "security", "content", "notifications", "general"
+  type      String   // "string", "number", "boolean", "json"
+  description String?
+  updatedAt DateTime @updatedAt
+  updatedBy String
+
+  @@map("system_settings")
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  action      String
+  entityType  String   // "user", "space", "post", "comment"
+  entityId    String?
+  details     Json?
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // Foreign key
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("activity_logs")
+}
+
 enum SpaceType {
   PUBLIC
   PRIVATE
@@ -218,10 +346,53 @@ enum VoteType {
   DOWNVOTE
 }
 
+enum UserRole {
+  USER
+  MODERATOR
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+enum ReportType {
+  SPAM
+  HARASSMENT
+  INAPPROPRIATE_CONTENT
+  COPYRIGHT
+  VIOLENCE
+  HATE_SPEECH
+  MISINFORMATION
+  OTHER
+}
+
+enum ModerationActionType {
+  WARN
+  MUTE
+  BAN
+  DELETE
+  FEATURE
+  VERIFY
+  UNVERIFY
+}
+
 enum NotificationType {
   COMMENT
   VOTE
   FOLLOW
   SPACE_JOIN
   MENTION
+  VERIFICATION_APPROVED
+  VERIFICATION_REJECTED
+  MODERATION_ACTION
 }
